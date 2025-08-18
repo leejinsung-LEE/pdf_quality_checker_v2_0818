@@ -1,0 +1,68 @@
+{
+  "temp_test.pdf": [
+    {
+      "backup_id": "20250811_195538_1f8a765c",
+      "original_path": "temp_test.pdf",
+      "backup_path": "data\\backups\\temp_test.pdf\\20250811_195538_1f8a765c.zip",
+      "file_hash": "1f8a765c75a65386c24ac38adc96b210",
+      "file_size": 1462,
+      "created_at": "2025-08-11T19:55:38.794329",
+      "profile_used": "default",
+      "changes_made": [
+        "RGB to CMYK 변환",
+        "폰트 임베딩"
+      ],
+      "metadata": {
+        "quality_score": 85.5
+      }
+    },
+    {
+      "backup_id": "20250811_195711_1f8a765c",
+      "original_path": "temp_test.pdf",
+      "backup_path": "data\\backups\\temp_test.pdf\\20250811_195711_1f8a765c.zip",
+      "file_hash": "1f8a765c75a65386c24ac38adc96b210",
+      "file_size": 1462,
+      "created_at": "2025-08-11T19:57:11.933736",
+      "profile_used": "default",
+      "changes_made": [
+        "RGB to CMYK 변환",
+        "폰트 임베딩"
+      ],
+      "metadata": {
+        "quality_score": 85.5
+      }
+    },
+    {
+      "backup_id": "20250811_195754_1f8a765c",
+      "original_path": "temp_test.pdf",
+      "backup_path": "data\\backups\\temp_test.pdf\\20250811_195754_1f8a765c.zip",
+      "file_hash": "1f8a765c75a65386c24ac38adc96b210",
+      "file_size": 1462,
+      "created_at": "2025-08-11T19:57:54.667691",
+      "profile_used": "default",
+      "changes_made": [
+        "RGB to CMYK 변환",
+        "폰트 임베딩"
+      ],
+      "metadata": {
+        "quality_score": 85.5
+      }
+    },
+    {
+      "backup_id": "20250811_195819_1f8a765c",
+      "original_path": "temp_test.pdf",
+      "backup_path": "data\\backups\\temp_test.pdf\\20250811_195819_1f8a765c.zip",
+      "file_hash": "1f8a765c75a65386c24ac38adc96b210",
+      "file_size": 1462,
+      "created_at": "2025-08-11T19:58:19.124619",
+      "profile_used": "default",
+      "changes_made": [
+        "RGB to CMYK 변환",
+        "폰트 임베딩"
+      ],
+      "metadata": {
+        "quality_score": 85.5
+      }
+    }
+  ]
+}

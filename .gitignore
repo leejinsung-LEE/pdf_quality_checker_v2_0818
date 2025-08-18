@@ -1,0 +1,100 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 프로젝트 특정 폴더
+data/cache/
+data/temp/
+logs/
+*.log
+
+# 테스트 결과
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# 환경 설정
+.env
+*.env
+user_settings.json
+
+# OS 관련
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Google Drive 임시 폴더
+.tmp.drivedownload/
+.tmp.driveupload/
+
+# 백업 파일
+*.bak
+*.swp
+*~
+
+# 출력 폴더
+output/
+reports/
+watch_output/
+watch_test/
+completed/
+
+# 폴더 감시 설정
+folder_watch_config.json
+test_watch_config.json
+
+# v1 백업 (임시)
+v1버전 gui데이터_참고용/
+
+# Ghostscript 및 Poppler 바이너리
+gs/
+poppler/
+
+# 압축 파일
+*.zip
+pdf_quality_checker_v2.zip
+
+# 임시 테스트 파일
+*.test.pdf
+test_*.html
+test_*.json
+test_*.py
+*.tmp
+nul
+temp_files/
+
+# 백업 파일 (모듈화)
+*.backup
+src/**/*.backup
+
+# 문서 정리
+docs/modularization/
+docs/GITHUB_BACKUP_GUIDE.md

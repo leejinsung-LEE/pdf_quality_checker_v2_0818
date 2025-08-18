@@ -1,0 +1,39 @@
+{
+  "name": "quick",
+  "description": "빠른 기본 검사 프로파일",
+  "created_at": "2025-08-06T14:59:34.581968",
+  "modified_at": "2025-08-06T14:59:34.581969",
+  "is_builtin": true,
+  "parent_profile": "default",
+  "quality_standards": {
+    "min_image_dpi": 150,
+    "min_line_art_dpi": 300,
+    "max_ink_coverage": 400,
+    "min_bleed_mm": 2.0,
+    "min_font_size": 4.0
+  },
+  "check_options": {
+    "check_fonts": true,
+    "check_colors": true,
+    "check_images": false,
+    "check_layout": false,
+    "check_print_settings": false,
+    "require_font_embedding": true,
+    "allow_rgb": true,
+    "check_transparency": false,
+    "check_overprint": false
+  },
+  "color_settings": {
+    "preferred_color_space": "CMYK",
+    "allow_spot_colors": true,
+    "max_spot_colors": 10
+  },
+  "enabled_rules": [
+    "font_not_embedded",
+    "rgb_color_used"
+  ],
+  "rule_severities": {
+    "font_not_embedded": "warning",
+    "rgb_color_used": "info"
+  }
+}

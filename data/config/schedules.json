@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "updated_at": "2025-08-11T19:58:19.129332",
+  "tasks": [
+    {
+      "id": "test_task_1",
+      "name": "테스트 작업",
+      "frequency": "daily",
+      "time": "10:00",
+      "weekday": null,
+      "day_of_month": null,
+      "folder_path": "tests/fixtures",
+      "profile": "default",
+      "auto_fix": false,
+      "recursive": true,
+      "file_pattern": "*.pdf",
+      "enabled": true,
+      "last_run": null,
+      "next_run": null,
+      "run_count": 0,
+      "error_count": 0,
+      "metadata": {}
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "default",
+  "description": "표준 인쇄 품질 검사 프로파일",
+  "created_at": "2025-08-06T14:59:34.581946",
+  "modified_at": "2025-08-06T14:59:34.581963",
+  "is_builtin": true,
+  "quality_standards": {
+    "min_image_dpi": 300,
+    "min_line_art_dpi": 600,
+    "max_ink_coverage": 320,
+    "min_bleed_mm": 3.0,
+    "min_font_size": 6.0
+  },
+  "check_options": {
+    "check_fonts": true,
+    "check_colors": true,
+    "check_images": true,
+    "check_layout": true,
+    "check_print_settings": true,
+    "require_font_embedding": true,
+    "allow_rgb": false,
+    "check_transparency": true,
+    "check_overprint": true,
+    "check_white_overprint": true,
+    "check_16bit_images": true,
+    "check_jpeg2000": true,
+    "check_jbig2": true,
+    "check_devicen": true,
+    "check_type3_fonts": true,
+    "check_icc_profile": true,
+    "check_font_substitution": true
+  },
+  "color_settings": {
+    "preferred_color_space": "CMYK",
+    "allow_spot_colors": true,
+    "max_spot_colors": 4
+  },
+  "enabled_rules": [
+    "font_not_embedded",
+    "font_substitution",
+    "type3_font",
+    "min_font_size",
+    "rgb_color_used",
+    "high_ink_coverage",
+    "white_overprint",
+    "devicen_color",
+    "low_resolution_image",
+    "16bit_image",
+    "jpeg2000_compression",
+    "jbig2_compression",
+    "missing_bleed",
+    "icc_profile_missing"
+  ],
+  "rule_severities": {
+    "font_not_embedded": "error",
+    "font_substitution": "error",
+    "type3_font": "warning",
+    "min_font_size": "warning",
+    "rgb_color_used": "error",
+    "high_ink_coverage": "warning",
+    "white_overprint": "warning",
+    "devicen_color": "info",
+    "low_resolution_image": "warning",
+    "16bit_image": "info",
+    "jpeg2000_compression": "warning",
+    "jbig2_compression": "warning",
+    "missing_bleed": "warning",
+    "icc_profile_missing": "info"
+  }
+}
