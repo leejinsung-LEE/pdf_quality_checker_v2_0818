@@ -297,8 +297,11 @@ class ProcessingCategory(BaseCategory):
                 self.widgets['move_completed_files'].deselect()
         
         if hasattr(settings, 'create_backup'):
-            if settings.create_backup:
-                self.widgets.get('create_backup', ctk.CTkSwitch()).select()
+            if 'create_backup' in self.widgets:
+                if settings.create_backup:
+                    self.widgets['create_backup'].select()
+                else:
+                    self.widgets['create_backup'].deselect()
         elif 'create_backup' in self.widgets:
             self.widgets['create_backup'].select()  # 기본값
         
@@ -325,16 +328,28 @@ class ProcessingCategory(BaseCategory):
         
         # 폴더 경로
         if hasattr(settings, 'default_output_folder') and settings.default_output_folder:
-            self.widgets['default_output_folder'].insert(0, settings.default_output_folder)
+            entry = self.widgets.get('default_output_folder')
+            if entry:
+                entry.delete(0, 'end')
+                entry.insert(0, settings.default_output_folder)
         
         if hasattr(settings, 'default_completed_folder') and settings.default_completed_folder:
-            self.widgets['default_completed_folder'].insert(0, settings.default_completed_folder)
+            entry = self.widgets.get('default_completed_folder')
+            if entry:
+                entry.delete(0, 'end')
+                entry.insert(0, settings.default_completed_folder)
         
         if hasattr(settings, 'backup_folder') and settings.backup_folder:
-            self.widgets.get('backup_folder', ctk.CTkEntry()).insert(0, settings.backup_folder)
+            entry = self.widgets.get('backup_folder')
+            if entry:
+                entry.delete(0, 'end')
+                entry.insert(0, settings.backup_folder)
         
         if hasattr(settings, 'temp_folder') and settings.temp_folder:
-            self.widgets.get('temp_folder', ctk.CTkEntry()).insert(0, settings.temp_folder)
+            entry = self.widgets.get('temp_folder')
+            if entry:
+                entry.delete(0, 'end')
+                entry.insert(0, settings.temp_folder)
     
     def get_settings(self) -> Dict[str, Any]:
         """현재 설정 값 반환"""

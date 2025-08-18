@@ -6,7 +6,8 @@
 """
 
 from .main_window import MainWindow
-from .window_ui import UIBuilder, DialogManager
+from .window_ui import UIBuilder
+from .dialog_manager import DialogManager  # V2를 사용하는 신버전 DialogManager
 from .window_managers import FileManager, FolderWatcherManager
 
 # MainWindow 초기화 헬퍼

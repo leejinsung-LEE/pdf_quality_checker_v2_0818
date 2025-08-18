@@ -1,5 +1,12 @@
 # Claude Code 지침 - PDF Quality Checker v2.0
 
+## 🚨 중요: 프로그램 진입점
+- **진입점은 항상 `main.py`입니다**
+- 모든 테스트와 실행은 `main.py`를 통해 수행
+- 직접 모듈 실행 금지 (예: `python src/ui/app.py` ❌)
+- 올바른 실행: `python main.py` ✅
+- 빠른 실행: `python main.py --fast` (외부 도구 체크 생략)
+
 ## 기본 동작 설정
 - **모든 작업에 대해 항상 심층 분석 수행**
 - 코드 작성, 수정, 분석 전 충분한 사고 과정 거치기
@@ -13,6 +20,15 @@
 ## UI 정보
 - **Classic UI(CustomTkinter) 전용 시스템**
 - Modern UI 관련 코드는 docs/old_docs/modern_ui_backup에 백업됨
+
+## 환경설정 시스템 (2025-01-18 업데이트)
+- **Settings V2가 기본으로 사용됨** (src/ui/views/settings_v2/)
+  - 사이드바 네비게이션, 즉시 적용 모드, 검색 기능
+  - 4개 카테고리: 일반, 처리, 알림, 고급
+- Settings V1 (레거시): src/ui/views/settings/ (모듈화된 탭 방식)
+- V1 강제 사용: `SET USE_LEGACY_UI=true` (Windows) 또는 `export USE_LEGACY_UI=true` (Linux/Mac)
+- 설정 파일: `user_settings.json` (파일 락 메커니즘 적용)
+- 주의: 두 UI를 동시에 열지 말 것 (데이터 충돌 방지됨)
 
 ## 프로젝트 구조
 - 모듈 경로: src/core/, src/processing/, src/ui/, src/external/, src/config/, src/utils/

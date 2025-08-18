@@ -8,6 +8,9 @@
 import json
 import shutil
 import logging
+import time
+import tempfile
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
@@ -50,12 +53,26 @@ class PersistenceManager(SettingsControllerBase):
             self.logger.warning(f"백업 파일 정리 실패: {e}")
     
     def load_settings(self) -> bool:
-        """설정 파일 로드
+        """설정 파일 로드 (파일 락 적용)
         
         Returns:
             bool: 로드 성공 여부
         """
+        # 락 파일 경로
+        lock_file = self.settings_file.with_suffix('.lock')
+        max_wait = 3  # 최대 3초 대기 (읽기는 더 짧게)
+        wait_interval = 0.1  # 100ms 간격으로 체크
+        
         try:
+            # 락이 있으면 대기
+            start_time = time.time()
+            while lock_file.exists():
+                if time.time() - start_time > max_wait:
+                    self.logger.warning("설정 파일 락 타임아웃 (읽기)")
+                    # 오래된 락 파일은 무시하고 진행
+                    break
+                time.sleep(wait_interval)
+            
             if self.settings_file.exists():
                 return self._load_from_file(self.settings_file)
             else:
@@ -127,12 +144,39 @@ class PersistenceManager(SettingsControllerBase):
         return self.save_settings()
     
     def save_settings(self) -> bool:
-        """설정 파일 저장
+        """설정 파일 저장 (파일 락 적용)
         
         Returns:
             bool: 저장 성공 여부
         """
+        # 락 파일 경로
+        lock_file = self.settings_file.with_suffix('.lock')
+        max_wait = 5  # 최대 5초 대기
+        wait_interval = 0.1  # 100ms 간격으로 체크
+        
         try:
+            # 락 획득 시도
+            start_time = time.time()
+            while lock_file.exists():
+                if time.time() - start_time > max_wait:
+                    self.logger.warning("설정 파일 락 타임아웃")
+                    # 오래된 락 파일 제거 (5초 이상)
+                    try:
+                        if lock_file.stat().st_mtime < time.time() - max_wait:
+                            lock_file.unlink()
+                            break
+                    except:
+                        pass
+                    return False
+                time.sleep(wait_interval)
+            
+            # 락 파일 생성
+            try:
+                with open(lock_file, 'w') as f:
+                    f.write(str(os.getpid()))
+            except:
+                self.logger.warning("락 파일 생성 실패")
+            
             # 1. 현재 파일 백업
             if not self._create_backup():
                 self.logger.warning("백업 생성 실패")
@@ -160,6 +204,13 @@ class PersistenceManager(SettingsControllerBase):
         except Exception as e:
             self.logger.error(f"설정 파일 저장 실패: {e}")
             return self._handle_save_failure()
+        finally:
+            # 락 파일 제거
+            try:
+                if lock_file.exists():
+                    lock_file.unlink()
+            except:
+                pass
     
     def _create_backup(self) -> bool:
         """현재 설정 파일 백업 생성

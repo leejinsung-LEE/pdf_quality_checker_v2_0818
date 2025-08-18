@@ -55,7 +55,9 @@
       "Bash(run_quick_perf_test.bat)",
       "Bash(copy:*)",
       "Bash(popplerLibrarybinpdffonts.exe:*)",
-      "Bash(.\\poppler\\Library\\bin\\pdffonts.exe:*)"
+      "Bash(.\\poppler\\Library\\bin\\pdffonts.exe:*)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then echo \"=== $file ===\")"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

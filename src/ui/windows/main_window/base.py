@@ -1,5 +1,9 @@
 """
 메인 윈도우 베이스 클래스
+
+⚠️ DEPRECATED: 이 파일은 더 이상 사용되지 않습니다.
+main_window.py를 사용하세요.
+중복 코드 제거를 위해 비활성화됨 (2025-01-18)
 """
 
 import customtkinter as ctk
@@ -13,12 +17,9 @@ from ...controllers import (
 )
 from ....processing import FolderWatcher
 
-from .ui_builder import UIBuilder
-from .view_manager import ViewManager
-from .event_handler import EventHandler
-from .file_manager import FileManager
-from .folder_watcher_manager import FolderWatcherManager
-from .dialog_manager import DialogManager
+# 이 파일은 더 이상 사용되지 않습니다.
+# main_window.py를 사용하세요.
+# Deprecated: Use main_window.py instead
 
 
 class MainWindow(tkinterdnd2.Tk):

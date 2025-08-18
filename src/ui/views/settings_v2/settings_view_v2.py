@@ -84,13 +84,13 @@ class SettingsViewV2(ctk.CTkToplevel):
         self.settings = self.settings_controller.get_settings()
         self.event_bus = get_event_bus()
         
-        # 변경사항 추적
-        self.original_settings = self._get_current_settings()
-        self.modified_fields = set()
-        
-        # 카테고리 위젯 저장
+        # 카테고리 위젯 저장 (먼저 초기화)
         self.category_widgets: Dict[str, ctk.CTkFrame] = {}
         self.current_category = "general"
+        
+        # 변경사항 추적
+        self.original_settings = {}  # 나중에 설정됨
+        self.modified_fields = set()
         
         # 콜백
         self.on_close: Optional[Callable] = None
@@ -103,6 +103,9 @@ class SettingsViewV2(ctk.CTkToplevel):
         
         # 초기 설정 로드
         self._load_settings()
+        
+        # UI 생성 후 원본 설정 저장
+        self.original_settings = self._get_current_settings()
         
         # 이벤트 구독
         self._subscribe_events()
@@ -276,7 +279,7 @@ class SettingsViewV2(ctk.CTkToplevel):
         self._update_changes_label()
         
         # 즉시 적용
-        self.settings_controller.update_setting(setting_key, value)
+        self.settings_controller.set_setting(setting_key, value)
         
         # 이벤트 발행
         self.event_bus.emit(
@@ -364,8 +367,10 @@ class SettingsViewV2(ctk.CTkToplevel):
     def _get_current_settings(self) -> Dict[str, Any]:
         """현재 설정 값 가져오기"""
         settings = {}
-        for widget in self.category_widgets.values():
-            settings.update(widget.get_settings())
+        if hasattr(self, 'category_widgets') and self.category_widgets:
+            for widget in self.category_widgets.values():
+                if hasattr(widget, 'get_settings'):
+                    settings.update(widget.get_settings())
         return settings
     
     def _subscribe_events(self):

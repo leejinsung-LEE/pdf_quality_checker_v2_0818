@@ -212,12 +212,13 @@ class DialogManager:
         except:
             pass
         
-        # 환경변수에서 확인
+        # 환경변수에서 확인 (V1 강제 사용 옵션)
         import os
-        if os.environ.get('USE_NEW_UI', '').lower() in ('true', '1', 'yes'):
-            return True
+        if os.environ.get('USE_LEGACY_UI', '').lower() in ('true', '1', 'yes'):
+            return False
         
-        # 기본값: 새 UI 사용 (테스트 목적)
+        # 기본값: 새 UI(V2) 사용
+        # V2가 안정화되고 개선되었으므로 기본으로 사용
         return True
     
     def toggle_ui_version(self):

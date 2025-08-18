@@ -61,6 +61,7 @@ class EventType(Enum):
     SETTINGS_SAVED = "settings.saved"
     SETTINGS_RESET = "settings.reset"
     SETTINGS_APPLIED = "settings.applied"
+    SETTINGS_CATEGORY_CHANGED = "settings.category.changed"
     
     # === 설정 - 일반 탭 ===
     THEME_CHANGED = "settings.theme.changed"
@@ -196,6 +197,7 @@ EVENT_CATEGORIES = {
         EventType.SETTINGS_SAVED,
         EventType.SETTINGS_RESET,
         EventType.SETTINGS_APPLIED,
+        EventType.SETTINGS_CATEGORY_CHANGED,
         EventType.THEME_CHANGED,
         EventType.LANGUAGE_CHANGED,
         EventType.STARTUP_OPTIONS_CHANGED,

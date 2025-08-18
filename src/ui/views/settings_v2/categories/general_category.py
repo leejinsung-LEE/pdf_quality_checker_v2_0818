@@ -187,6 +187,7 @@ class GeneralCategory(BaseCategory):
         columns_frame = ctk.CTkFrame(parent, fg_color="transparent")
         columns_frame.pack(fill='x')
         
+        row_frame = None  # 초기화
         for i, (col_id, col_name) in enumerate(columns):
             row = i // 2
             col = i % 2
@@ -196,16 +197,17 @@ class GeneralCategory(BaseCategory):
                 row_frame = ctk.CTkFrame(columns_frame, fg_color="transparent")
                 row_frame.pack(fill='x', pady=2)
             
-            # 체크박스
-            checkbox = ctk.CTkCheckBox(
-                row_frame,
-                text=col_name,
-                width=150,
-                command=lambda cid=col_id: self._on_column_visibility_change(cid)
-            )
-            checkbox.pack(side='left', padx=(0, 20))
-            
-            self.widgets[f'column_{col_id}'] = checkbox
+            # 체크박스 (row_frame이 None이 아닌지 확인)
+            if row_frame is not None:
+                checkbox = ctk.CTkCheckBox(
+                    row_frame,
+                    text=col_name,
+                    width=150,
+                    command=lambda cid=col_id: self._on_column_visibility_change(cid)
+                )
+                checkbox.pack(side='left', padx=(0, 20))
+                
+                self.widgets[f'column_{col_id}'] = checkbox
     
     def _on_sidebar_width_change(self, value: float):
         """사이드바 너비 변경"""

@@ -20,6 +20,36 @@ class NotificationCategory(BaseCategory):
     - 알림 히스토리
     """
     
+    def _on_widget_change(self, widget_id: str, value: Any):
+        """위젯 값 변경 이벤트 - 개선된 alarm_settings 처리"""
+        # original_values 추적 (BaseCategory 기능 유지)
+        if widget_id not in self.original_values:
+            self.original_values[widget_id] = value
+        
+        # 개별 설정 업데이트 (다른 카테고리와 통일)
+        if self.on_setting_change:
+            # alarm 관련 설정인지 확인
+            if widget_id.startswith(('alarm_', 'condition_', 'sound_', 'quiet_', 
+                                    'notification_method_', 'keep_notification_',
+                                    'max_history_', 'cooldown_', 'max_notifications_')):
+                # alarm_settings 전체를 재구성하여 업데이트
+                self._update_alarm_settings()
+            else:
+                # 일반 설정은 개별 업데이트
+                self.on_setting_change(widget_id, value)
+    
+    def _update_alarm_settings(self):
+        """alarm_settings 전체를 재구성하여 업데이트"""
+        settings_dict = self.get_settings()
+        if "alarm_settings" in settings_dict:
+            try:
+                from src.config.alarm_config import AlarmSettings
+                alarm_obj = AlarmSettings.from_dict(settings_dict["alarm_settings"])
+                self.on_setting_change("alarm_settings", alarm_obj)
+            except Exception as e:
+                # 오류 발생 시 로깅 (실제 구현 시 로거 사용)
+                print(f"알람 설정 업데이트 오류: {e}")
+    
     def _create_ui(self):
         """UI 생성"""
         # 알림 활성화 섹션
@@ -357,16 +387,11 @@ class NotificationCategory(BaseCategory):
     
     def _on_notification_method_change(self, method_id: str):
         """알림 방법 변경"""
-        methods = []
-        for mid, checkbox in self.method_checkboxes.items():
-            if checkbox.get():
-                methods.append(mid)
-        
-        self._on_widget_change("default_notification_methods", methods)
+        # _on_widget_change가 처리함
+        self._on_widget_change(f"notification_method_{method_id}", self.method_checkboxes[method_id].get())
     
     def _on_condition_change(self, cond_id: str):
         """알림 조건 변경"""
-        # 개별 조건 변경 처리
         enabled = self.widgets[f'condition_{cond_id}_enabled'].get()
         self._on_widget_change(f'condition_{cond_id}_enabled', enabled)
     
@@ -407,17 +432,23 @@ class NotificationCategory(BaseCategory):
     def load_settings(self, settings):
         """설정 로드"""
         # 알림 설정
-        if hasattr(settings, 'alarm_settings'):
+        if hasattr(settings, 'alarm_settings') and settings.alarm_settings:
             alarm = settings.alarm_settings
             
             # 마스터 스위치
-            if alarm.get('enabled'):
-                self.master_switch.select()
-            else:
-                self.master_switch.deselect()
+            if hasattr(alarm, 'enabled'):
+                if alarm.enabled:
+                    self.master_switch.select()
+                else:
+                    self.master_switch.deselect()
             
             # 알림 방법
-            methods = alarm.get('default_notification_methods', ['system'])
+            if hasattr(alarm, 'default_notification_methods'):
+                # NotificationMethod enum을 문자열로 변환
+                methods = [m.value if hasattr(m, 'value') else m for m in alarm.default_notification_methods]
+            else:
+                methods = ['system']
+            
             for method_id, checkbox in self.method_checkboxes.items():
                 if method_id in methods:
                     checkbox.select()
@@ -425,61 +456,74 @@ class NotificationCategory(BaseCategory):
                     checkbox.deselect()
             
             # 조건별 설정
-            conditions = alarm.get('conditions', {})
-            for cond_id, cond_data in conditions.items():
-                # 활성화 상태
-                enabled_widget = self.widgets.get(f'condition_{cond_id}_enabled')
-                if enabled_widget:
-                    if cond_data.get('enabled'):
-                        enabled_widget.select()
-                    else:
-                        enabled_widget.deselect()
-                
-                # 임계값
-                threshold_widget = self.widgets.get(f'condition_{cond_id}_threshold')
-                if threshold_widget and cond_data.get('threshold_value') is not None:
-                    threshold_widget.insert(0, str(cond_data['threshold_value']))
+            if hasattr(alarm, 'conditions'):
+                # AlarmConditionType enum을 문자열로 변환하여 처리
+                for condition_type, condition in alarm.conditions.items():
+                    # enum의 value를 가져옴
+                    cond_id = condition_type.value if hasattr(condition_type, 'value') else str(condition_type)
+                    
+                    # 활성화 상태
+                    enabled_widget = self.widgets.get(f'condition_{cond_id}_enabled')
+                    if enabled_widget and hasattr(condition, 'enabled'):
+                        if condition.enabled:
+                            enabled_widget.select()
+                        else:
+                            enabled_widget.deselect()
+                    
+                    # 임계값
+                    threshold_widget = self.widgets.get(f'condition_{cond_id}_threshold')
+                    if threshold_widget and hasattr(condition, 'threshold_value') and condition.threshold_value is not None:
+                        threshold_widget.insert(0, str(condition.threshold_value))
             
             # 소리 설정
-            sound = alarm.get('sound_settings', {})
-            if sound.get('enabled'):
-                self.widgets['sound_enabled'].select()
-            else:
-                self.widgets['sound_enabled'].deselect()
-            
-            if sound.get('volume'):
-                self.volume_slider.set(sound['volume'])
-                self.volume_label.configure(text=f"{sound['volume']}%")
-            
-            if sound.get('default_sound'):
-                self.sound_combo.set("기본")
+            if hasattr(alarm, 'sound_settings') and alarm.sound_settings:
+                sound = alarm.sound_settings
+                
+                if hasattr(sound, 'enabled'):
+                    if sound.enabled:
+                        self.widgets['sound_enabled'].select()
+                    else:
+                        self.widgets['sound_enabled'].deselect()
+                
+                if hasattr(sound, 'volume'):
+                    self.volume_slider.set(sound.volume)
+                    self.volume_label.configure(text=f"{sound.volume}%")
+                
+                if hasattr(sound, 'default_sound') and sound.default_sound:
+                    # 기본 사운드 파일명에 따라 콤보박스 설정
+                    if sound.default_sound == 'default.wav':
+                        self.sound_combo.set("기본")
+                    else:
+                        self.sound_combo.set("기본")
             
             # 조용한 시간
-            if alarm.get('quiet_hours_enabled'):
-                self.widgets['quiet_hours_enabled'].select()
-            else:
-                self.widgets['quiet_hours_enabled'].deselect()
+            if hasattr(alarm, 'quiet_hours_enabled'):
+                if alarm.quiet_hours_enabled:
+                    self.widgets['quiet_hours_enabled'].select()
+                else:
+                    self.widgets['quiet_hours_enabled'].deselect()
             
-            if alarm.get('quiet_hours_start'):
-                self.start_time_entry.insert(0, alarm['quiet_hours_start'])
+            if hasattr(alarm, 'quiet_hours_start') and alarm.quiet_hours_start:
+                self.start_time_entry.insert(0, alarm.quiet_hours_start)
             
-            if alarm.get('quiet_hours_end'):
-                self.end_time_entry.insert(0, alarm['quiet_hours_end'])
+            if hasattr(alarm, 'quiet_hours_end') and alarm.quiet_hours_end:
+                self.end_time_entry.insert(0, alarm.quiet_hours_end)
             
             # 히스토리
-            if alarm.get('keep_notification_history'):
-                self.widgets['keep_notification_history'].select()
-            else:
-                self.widgets['keep_notification_history'].deselect()
+            if hasattr(alarm, 'keep_notification_history'):
+                if alarm.keep_notification_history:
+                    self.widgets['keep_notification_history'].select()
+                else:
+                    self.widgets['keep_notification_history'].deselect()
             
-            if alarm.get('max_history_items'):
-                self.max_items_entry.insert(0, str(alarm['max_history_items']))
+            if hasattr(alarm, 'max_history_items') and alarm.max_history_items:
+                self.max_items_entry.insert(0, str(alarm.max_history_items))
             
-            if alarm.get('cooldown_seconds'):
-                self.cooldown_entry.insert(0, str(alarm['cooldown_seconds']))
+            if hasattr(alarm, 'cooldown_seconds') and alarm.cooldown_seconds:
+                self.cooldown_entry.insert(0, str(alarm.cooldown_seconds))
             
-            if alarm.get('max_notifications_per_minute'):
-                self.max_per_min_entry.insert(0, str(alarm['max_notifications_per_minute']))
+            if hasattr(alarm, 'max_notifications_per_minute') and alarm.max_notifications_per_minute:
+                self.max_per_min_entry.insert(0, str(alarm.max_notifications_per_minute))
     
     def get_settings(self) -> Dict[str, Any]:
         """현재 설정 값 반환"""
